@@ -4,50 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BetSport{% endblock %}</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🏆</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%220.9em%22 font-size=%2226%22>♛</text></svg>">
+
     {% block stylesheets %}{% endblock %}
     {% block javascripts %}
         {% block importmap %}{{ importmap('app') }}{% endblock %}
     {% endblock %}
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body>
 
-    <nav class="bg-gray-900 text-white shadow">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="{{ path('app_login') }}" class="text-xl font-bold tracking-wide">🏆 BetSport</a>
-            <div class="flex items-center gap-4 text-sm">
+    <nav class="nav-bar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+            <a href="{{ path('app_login') }}" style="display:flex;align-items:center;gap:0.625rem;text-decoration:none;">
+                <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M4 31L7.5 14L14.5 20L20 5L25.5 20L32.5 14L36 31H4Z"
+                          stroke="rgba(212,175,55,1)" stroke-width="2.2" fill="none"
+                          stroke-linejoin="round" stroke-linecap="round"/>
+                    <line x1="4" y1="36" x2="36" y2="36"
+                          stroke="rgba(212,175,55,1)" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+                <span style="font-family:'Cinzel',serif;font-size:1.125rem;font-weight:700;letter-spacing:0.10em;color:rgba(212,175,55,1);">BetSport</span>
+            </a>
+
+            <div class="flex items-center gap-5">
                 {% if app.user %}
-                    <span class="text-gray-300">{{ app.user.email }}</span>
+                    <span style="color:rgba(130,126,148,1);font-size:0.8rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ app.user.email }}</span>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('app_admin_dashboard') }}" class="hover:text-yellow-400">Admin</a>
+                        <a href="{{ path('app_admin_dashboard') }}" class="nav-link">Administration</a>
                     {% endif %}
                     {% if is_granted('ROLE_MANAGER') %}
-                        <a href="{{ path('app_manager_dashboard') }}" class="hover:text-yellow-400">Manager</a>
+                        <a href="{{ path('app_manager_dashboard') }}" class="nav-link">Gestionnaire</a>
                     {% endif %}
-                    <a href="{{ path('app_user_dashboard') }}" class="hover:text-yellow-400">Mon espace</a>
-                    <a href="{{ path('app_logout') }}" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded">Déconnexion</a>
+                    <a href="{{ path('app_user_dashboard') }}" class="nav-link">Mon espace</a>
+                    <a href="{{ path('app_logout') }}" class="btn-danger">Déconnexion</a>
                 {% else %}
-                    <a href="{{ path('app_login') }}" class="hover:text-yellow-400">Connexion</a>
-                    <a href="{{ path('app_register') }}" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold px-3 py-1 rounded">Inscription</a>
+                    <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
+                    <a href="{{ path('app_register') }}" class="btn-ghost">Inscription</a>
                 {% endif %}
             </div>
         </div>
     </nav>
 
-    <main class="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+    <main class="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
         {% for label, messages in app.flashes %}
             {% for message in messages %}
-                <div class="mb-4 px-4 py-3 rounded {{ label == 'error' ? 'bg-red-100 text-red-700 border border-red-300' : 'bg-green-100 text-green-700 border border-green-300' }}">
-                    {{ message }}
-                </div>
+                <div class="{{ label == 'error' ? 'flash-error' : 'flash-success' }}">{{ message }}</div>
             {% endfor %}
         {% endfor %}
 
         {% block body %}{% endblock %}
     </main>
 
-    <footer class="bg-gray-900 text-gray-400 text-center py-4 text-xs mt-auto">
-        Plateforme fictive à but pédagogique — Jouer comporte des risques. Jouez de manière responsable.
+    <footer class="site-footer mt-auto">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span style="font-family:'Cinzel',serif;font-size:0.6875rem;letter-spacing:0.18em;color:rgba(212,175,55,1);font-weight:700;">BETSPORT</span>
+            <p style="font-size:0.6875rem;color:rgba(90,88,105,1);text-align:center;">
+                Plateforme fictive à but pédagogique —
+                <span style="color:rgba(130,126,148,1);">Jouez de manière responsable.</span>
+            </p>
+            <span style="font-size:0.6875rem;color:rgba(60,58,75,1);">© 2025–2026 ESGI</span>
+        </div>
     </footer>
 
 </body>

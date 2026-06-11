@@ -1,5 +1,294 @@
 @import "tailwindcss";
 
-body {
-    background-color: skyblue;
+/* ─── Font families ─── */
+@theme {
+  --font-display: 'Cinzel', Georgia, 'Times New Roman', serif;
+  --font-sans:    'Jost', system-ui, sans-serif;
+}
+
+/* ─── Design tokens ─── */
+:root {
+  /* Backgrounds */
+  --col-abyss:      rgba(8, 8, 16, 1);
+  --col-vault:      rgba(14, 14, 24, 1);
+  --col-panel:      rgba(20, 20, 34, 1);
+  --col-border:     rgba(36, 36, 58, 1);
+
+  /* Gold */
+  --col-gold:       rgba(212, 175, 55, 1);
+  --col-gold-pale:  rgba(236, 210, 110, 1);
+  --col-gold-muted: rgba(155, 125, 38, 1);
+  --col-gold-rim:   rgba(85, 68, 18, 1);
+
+  /* Text */
+  --col-ivory:      rgba(238, 232, 215, 1);
+  --col-fog:        rgba(130, 126, 148, 1);
+
+  /* Status */
+  --col-ember:      rgba(210, 70, 55, 1);
+  --col-ember-bg:   rgba(35, 10, 8, 1);
+  --col-jade:       rgba(52, 168, 110, 1);
+  --col-jade-bg:    rgba(8, 32, 20, 1);
+
+  --ease-luxury: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ─── Base ─── */
+@layer base {
+  html {
+    background-color: var(--col-abyss);
+    color: var(--col-ivory);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--col-abyss);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: var(--col-gold);
+    color: var(--col-abyss);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--col-gold-muted);
+    outline-offset: 2px;
+  }
+
+  /* Symfony form error lists */
+  ul.errors {
+    padding: 0;
+    margin: 0.3rem 0 0;
+    list-style: none;
+  }
+
+  ul.errors li,
+  .form-error-message {
+    color: rgba(220, 100, 85, 1);
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+  }
+}
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position:  200% center; }
+}
+
+/* ─── Components ─── */
+@layer components {
+
+  /* Nav */
+  .nav-bar {
+    background-color: var(--col-vault);
+    border-bottom: 1px solid var(--col-gold-rim);
+  }
+
+  .nav-link {
+    color: var(--col-fog);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .nav-link:hover { color: var(--col-gold); }
+
+  /* Luxury card */
+  .card-luxury {
+    background-color: var(--col-vault);
+    border: 1px solid var(--col-gold-rim);
+    border-top: 3px solid var(--col-gold);
+    border-radius: 2px;
+    padding: 2.5rem;
+    animation: fadeUp 0.5s var(--ease-luxury) both;
+  }
+
+  /* Gold CTA button */
+  .btn-gold {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--col-gold);
+    color: var(--col-abyss);
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 1px;
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+      background-color 0.3s var(--ease-luxury),
+      transform 0.2s var(--ease-luxury),
+      box-shadow 0.3s var(--ease-luxury);
+  }
+
+  .btn-gold::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.28) 50%,
+      transparent 65%
+    );
+    background-size: 200% 100%;
+    background-position: -200% center;
+    transition: background-position 0.55s var(--ease-luxury);
+    pointer-events: none;
+  }
+
+  .btn-gold:hover {
+    background-color: var(--col-gold-pale);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 30px rgba(212, 175, 55, 0.28);
+  }
+
+  .btn-gold:hover::after {
+    background-position: 200% center;
+  }
+
+  .btn-gold:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  /* Ghost / outline button */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 1rem;
+    background-color: transparent;
+    color: var(--col-gold);
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--col-gold-rim);
+    border-radius: 1px;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--col-gold);
+    color: var(--col-gold-pale);
+    background-color: rgba(212, 175, 55, 0.06);
+  }
+
+  /* Danger / logout */
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.875rem;
+    background-color: transparent;
+    color: var(--col-ember);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid rgba(210, 70, 55, 0.38);
+    border-radius: 1px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .btn-danger:hover {
+    background-color: var(--col-ember-bg);
+    border-color: var(--col-ember);
+  }
+
+  /* Form label */
+  .label-luxury {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--col-fog);
+    margin-bottom: 0.375rem;
+  }
+
+  /* Form input */
+  .field-luxury {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    background-color: var(--col-panel);
+    color: var(--col-ivory);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    border: 1px solid var(--col-border);
+    border-radius: 1px;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .field-luxury::placeholder {
+    color: var(--col-fog);
+    opacity: 0.6;
+  }
+
+  .field-luxury:focus {
+    border-color: var(--col-gold-muted);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.10);
+  }
+
+  /* Flash messages */
+  .flash-error {
+    padding: 0.75rem 1rem;
+    background-color: var(--col-ember-bg);
+    color: rgba(220, 100, 85, 1);
+    border: 1px solid rgba(210, 70, 55, 0.38);
+    border-radius: 1px;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  .flash-success {
+    padding: 0.75rem 1rem;
+    background-color: var(--col-jade-bg);
+    color: rgba(80, 190, 135, 1);
+    border: 1px solid rgba(52, 168, 110, 0.38);
+    border-radius: 1px;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Footer */
+  .site-footer {
+    background-color: var(--col-vault);
+    border-top: 1px solid rgba(85, 68, 18, 0.35);
+  }
+}
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  .card-luxury { animation: none; }
+  .btn-gold::after { display: none; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

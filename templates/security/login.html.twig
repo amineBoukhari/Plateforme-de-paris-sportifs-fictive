@@ -3,42 +3,68 @@
 {% block title %}Connexion — BetSport{% endblock %}
 
 {% block body %}
-<div class="max-w-md mx-auto mt-10">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Connexion</h1>
+<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2rem 0;">
+    <div style="width:100%;max-width:400px;">
 
-    {% if error %}
-        <div class="mb-4 px-4 py-3 rounded bg-red-100 text-red-700 border border-red-300">
-            {{ error.messageKey|trans(error.messageData, 'security') }}
-        </div>
-    {% endif %}
-
-    <form method="post" class="bg-white shadow rounded-lg p-6 space-y-4">
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-        <div>
-            <label for="inputEmail" class="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
-            <input type="email" id="inputEmail" name="_username" value="{{ last_username }}" autocomplete="email" required autofocus
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
-        </div>
-
-        <div>
-            <label for="inputPassword" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-            <input type="password" id="inputPassword" name="_password" autocomplete="current-password" required
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        <!-- Brand mark -->
+        <div style="text-align:center;margin-bottom:2rem;">
+            <svg width="44" height="44" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="display:inline-block;margin-bottom:0.875rem;" aria-hidden="true">
+                <path d="M4 31L7.5 14L14.5 20L20 5L25.5 20L32.5 14L36 31H4Z"
+                      stroke="rgba(212,175,55,1)" stroke-width="2" fill="none"
+                      stroke-linejoin="round" stroke-linecap="round"/>
+                <line x1="4" y1="36" x2="36" y2="36"
+                      stroke="rgba(212,175,55,1)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <h1 style="font-family:'Cinzel',serif;font-size:1.875rem;font-weight:700;letter-spacing:0.08em;color:rgba(212,175,55,1);margin:0;line-height:1.1;">BetSport</h1>
+            <p style="color:rgba(130,126,148,1);font-size:0.8rem;letter-spacing:0.08em;margin-top:0.5rem;text-transform:uppercase;">Votre espace privé</p>
         </div>
 
-        <button type="submit"
-            class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold py-2 rounded transition">
-            Se connecter
-        </button>
-    </form>
+        <div class="card-luxury">
 
-    <p class="text-center text-sm text-gray-500 mt-4">
-        Pas encore de compte ? <a href="{{ path('app_register') }}" class="text-yellow-600 hover:underline">S'inscrire</a>
-    </p>
+            {% if error %}
+                <div class="flash-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
 
-    <p class="text-center text-xs text-gray-400 mt-6">
-        Jouer comporte des risques. Jouez de manière responsable.
-    </p>
+            <form method="post" style="display:flex;flex-direction:column;gap:1.25rem;">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div>
+                    <label for="inputEmail" class="label-luxury">Adresse email</label>
+                    <input type="email" id="inputEmail" name="_username"
+                           value="{{ last_username }}"
+                           autocomplete="email" required autofocus
+                           class="field-luxury"
+                           placeholder="votre@email.com">
+                </div>
+
+                <div>
+                    <label for="inputPassword" class="label-luxury">Mot de passe</label>
+                    <input type="password" id="inputPassword" name="_password"
+                           autocomplete="current-password" required
+                           class="field-luxury"
+                           placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn-gold" style="margin-top:0.5rem;">
+                    Se connecter
+                </button>
+            </form>
+
+            <p style="text-align:center;font-size:0.8125rem;color:rgba(130,126,148,1);margin-top:1.5rem;">
+                Pas encore de compte ?
+                <a href="{{ path('app_register') }}"
+                   style="color:rgba(212,175,55,1);text-decoration:none;font-weight:500;"
+                   onmouseover="this.style.color='rgba(236,210,110,1)'"
+                   onmouseout="this.style.color='rgba(212,175,55,1)'">
+                    S'inscrire
+                </a>
+            </p>
+        </div>
+
+        <p style="text-align:center;font-size:0.6875rem;color:rgba(70,68,85,1);margin-top:1.5rem;letter-spacing:0.03em;">
+            Jouer comporte des risques. Jouez de manière responsable.
+        </p>
+    </div>
 </div>
 {% endblock %}
