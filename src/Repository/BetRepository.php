@@ -26,6 +26,14 @@ class BetRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function createByUserQueryBuilder(int $userId): \Doctrine\ORM\QueryBuilder
+    {
+        return $this->createQueryBuilder('b')
+            ->where('b.user = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('b.createdAt', 'DESC');
+    }
+
     public function findPendingByEvent(int $eventId): array
     {
         return $this->createQueryBuilder('b')

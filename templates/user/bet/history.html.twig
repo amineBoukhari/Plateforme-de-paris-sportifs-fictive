@@ -9,7 +9,7 @@
         <h1 style="font-family:'Cinzel',serif;font-size:1.875rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">Historique des paris</h1>
     </div>
 
-    {% if bets is empty %}
+    {% if pagination.totalItemCount == 0 %}
         <div style="border:1px solid rgba(85,68,18,0.4);border-radius:2px;padding:3rem;text-align:center;">
             <p style="color:rgba(130,126,148,1);font-size:0.9rem;margin:0 0 1rem;">Vous n'avez pas encore placé de pari.</p>
             <a href="{{ path('app_user_bet_index') }}" class="btn-ghost">Voir les événements</a>
@@ -25,7 +25,7 @@
                 <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Statut</span>
             </div>
 
-            {% for bet in bets %}
+            {% for bet in pagination %}
                 {% set statusColor = {
                     'EN_ATTENTE': 'rgba(212,175,55,1)',
                     'GAGNE':      'rgba(52,168,110,1)',
@@ -56,6 +56,8 @@
                 </div>
             {% endfor %}
         </div>
+
+        {{ include('components/_pagination.html.twig') }}
     {% endif %}
 
 </div>

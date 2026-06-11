@@ -1,0 +1,73 @@
+{% if pagination.pageCount > 1 %}
+<nav style="display:flex;justify-content:center;align-items:center;gap:0.375rem;margin-top:2rem;">
+
+    {# Précédent #}
+    {% if pagination.currentPageNumber > 1 %}
+        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({page: pagination.currentPageNumber - 1})) }}"
+           style="display:flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border:1px solid rgba(85,68,18,0.5);border-radius:2px;color:rgba(212,175,55,0.8);font-size:0.875rem;text-decoration:none;background:rgba(14,14,24,1);transition:border-color 0.2s,color 0.2s;"
+           onmouseover="this.style.borderColor='rgba(212,175,55,0.8)';this.style.color='rgba(212,175,55,1)'"
+           onmouseout="this.style.borderColor='rgba(85,68,18,0.5)';this.style.color='rgba(212,175,55,0.8)'">
+            ‹
+        </a>
+    {% else %}
+        <span style="display:flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border:1px solid rgba(36,36,58,1);border-radius:2px;color:rgba(60,58,75,1);font-size:0.875rem;background:rgba(14,14,24,1);cursor:not-allowed;">
+            ‹
+        </span>
+    {% endif %}
+
+    {# Pages #}
+    {% set start = max(1, pagination.currentPageNumber - 2) %}
+    {% set end   = min(pagination.pageCount, pagination.currentPageNumber + 2) %}
+
+    {% if start > 1 %}
+        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({page: 1})) }}"
+           style="display:flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border:1px solid rgba(85,68,18,0.5);border-radius:2px;color:rgba(212,175,55,0.8);font-size:0.8125rem;text-decoration:none;background:rgba(14,14,24,1);">1</a>
+        {% if start > 2 %}
+            <span style="color:rgba(85,68,18,0.8);font-size:0.75rem;padding:0 0.25rem;">…</span>
+        {% endif %}
+    {% endif %}
+
+    {% for page in start..end %}
+        {% if page == pagination.currentPageNumber %}
+            <span style="display:flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border:1px solid rgba(212,175,55,0.6);border-radius:2px;background:rgba(212,175,55,0.1);color:rgba(212,175,55,1);font-size:0.8125rem;font-family:'Cinzel',serif;font-weight:600;">
+                {{ page }}
+            </span>
+        {% else %}
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({page: page})) }}"
+               style="display:flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border:1px solid rgba(85,68,18,0.5);border-radius:2px;color:rgba(212,175,55,0.8);font-size:0.8125rem;text-decoration:none;background:rgba(14,14,24,1);transition:border-color 0.2s,color 0.2s;"
+               onmouseover="this.style.borderColor='rgba(212,175,55,0.8)';this.style.color='rgba(212,175,55,1)'"
+               onmouseout="this.style.borderColor='rgba(85,68,18,0.5)';this.style.color='rgba(212,175,55,0.8)'">
+                {{ page }}
+            </a>
+        {% endif %}
+    {% endfor %}
+
+    {% if end < pagination.pageCount %}
+        {% if end < pagination.pageCount - 1 %}
+            <span style="color:rgba(85,68,18,0.8);font-size:0.75rem;padding:0 0.25rem;">…</span>
+        {% endif %}
+        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({page: pagination.pageCount})) }}"
+           style="display:flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border:1px solid rgba(85,68,18,0.5);border-radius:2px;color:rgba(212,175,55,0.8);font-size:0.8125rem;text-decoration:none;background:rgba(14,14,24,1);">{{ pagination.pageCount }}</a>
+    {% endif %}
+
+    {# Suivant #}
+    {% if pagination.currentPageNumber < pagination.pageCount %}
+        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({page: pagination.currentPageNumber + 1})) }}"
+           style="display:flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border:1px solid rgba(85,68,18,0.5);border-radius:2px;color:rgba(212,175,55,0.8);font-size:0.875rem;text-decoration:none;background:rgba(14,14,24,1);transition:border-color 0.2s,color 0.2s;"
+           onmouseover="this.style.borderColor='rgba(212,175,55,0.8)';this.style.color='rgba(212,175,55,1)'"
+           onmouseout="this.style.borderColor='rgba(85,68,18,0.5)';this.style.color='rgba(212,175,55,0.8)'">
+            ›
+        </a>
+    {% else %}
+        <span style="display:flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border:1px solid rgba(36,36,58,1);border-radius:2px;color:rgba(60,58,75,1);font-size:0.875rem;background:rgba(14,14,24,1);cursor:not-allowed;">
+            ›
+        </span>
+    {% endif %}
+
+</nav>
+
+<p style="text-align:center;font-size:0.6875rem;color:rgba(85,68,18,0.9);letter-spacing:0.08em;margin-top:0.75rem;">
+    {{ pagination.totalItemCount }} résultat{{ pagination.totalItemCount > 1 ? 's' : '' }} —
+    page {{ pagination.currentPageNumber }} / {{ pagination.pageCount }}
+</p>
+{% endif %}

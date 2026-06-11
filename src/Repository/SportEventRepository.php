@@ -35,4 +35,12 @@ class SportEventRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function createByManagerQueryBuilder(int $managerId): \Doctrine\ORM\QueryBuilder
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.manager = :managerId')
+            ->setParameter('managerId', $managerId)
+            ->orderBy('e.eventDate', 'DESC');
+    }
 }

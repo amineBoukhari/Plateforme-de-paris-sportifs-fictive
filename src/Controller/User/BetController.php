@@ -7,6 +7,7 @@ use App\Repository\BetRepository;
 use App\Repository\OutcomeRepository;
 use App\Repository\SportEventRepository;
 use App\Service\BettingService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -75,12 +76,16 @@ class BetController extends AbstractController
     }
 
     #[Route('/history', name: 'history')]
-    public function history(BetRepository $betRepository): Response
+    public function history(Request $request, BetRepository $betRepository, PaginatorInterface $paginator): Response
     {
-        $bets = $betRepository->findByUser($this->getUser()->getId());
+        $pagination = $paginator->paginate(
+            $betRepository->createByUserQueryBuilder($this->getUser()->getId()),
+            $request->query->getInt('page', 1),
+            5
+        );
 
         return $this->render('user/bet/history.html.twig', [
-            'bets' => $bets,
+            'pagination' => $pagination,
         ]);
     }
 }

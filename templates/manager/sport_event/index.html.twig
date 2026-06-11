@@ -15,7 +15,7 @@
         </a>
     </div>
 
-    {% if events is empty %}
+    {% if pagination.totalItemCount == 0 %}
         <div style="border:1px solid rgba(85,68,18,0.4);border-radius:2px;padding:3rem;text-align:center;">
             <p style="color:rgba(130,126,148,1);font-size:0.9rem;margin:0 0 1rem;">Aucun événement créé.</p>
             <a href="{{ path('app_manager_event_new') }}" class="btn-ghost">Créer un événement</a>
@@ -31,7 +31,7 @@
                 <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Actions</span>
             </div>
 
-            {% for event in events %}
+            {% for event in pagination %}
                 <div style="display:grid;grid-template-columns:1fr 100px 140px 180px;gap:1rem;align-items:center;padding:1rem 1.25rem;border-bottom:{{ not loop.last ? '1px solid rgba(36,36,58,1)' : 'none' }};background:rgba(14,14,24,1);">
 
                     {# Name + date #}
@@ -116,6 +116,8 @@
                 </div>
             {% endfor %}
         </div>
+
+        {{ include('components/_pagination.html.twig') }}
     {% endif %}
 
 </div>
