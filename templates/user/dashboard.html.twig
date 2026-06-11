@@ -16,11 +16,29 @@
         <div style="width:3rem;height:2px;background:rgba(212,175,55,1);margin-top:1rem;"></div>
     </div>
 
-    <!-- Placeholder panel -->
-    <div style="background:rgba(14,14,24,1);border:1px solid rgba(85,68,18,1);border-top:3px solid rgba(212,175,55,0.35);border-radius:2px;padding:2rem;">
-        <p style="color:rgba(130,126,148,1);font-size:0.9375rem;line-height:1.7;margin:0;">
-            Votre espace personnel sera enrichi dans les prochaines étapes.
-        </p>
+    <!-- Wallet card -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.5rem;">
+
+        <div class="card-luxury" style="display:flex;flex-direction:column;gap:0.5rem;">
+            <p style="font-size:0.6875rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(130,126,148,1);margin:0;">Solde disponible</p>
+            <p style="font-family:'Cinzel',serif;font-size:2rem;font-weight:700;color:rgba(212,175,55,1);margin:0;letter-spacing:0.04em;">
+                {{ app.user.wallet|number_format(2, ',', ' ') }} €
+            </p>
+            <a href="{{ path('app_user_wallet_deposit') }}" class="btn-gold" style="margin-top:0.75rem;text-align:center;text-decoration:none;display:block;">
+                Déposer des fonds
+            </a>
+        </div>
+
+        <div class="card-luxury" style="display:flex;flex-direction:column;gap:0.5rem;">
+            <p style="font-size:0.6875rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(130,126,148,1);margin:0;">Paris en cours</p>
+            <p style="font-family:'Cinzel',serif;font-size:2rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">
+                {{ app.user.bets|length }}
+            </p>
+            <p style="font-size:0.8125rem;color:rgba(130,126,148,1);margin:0.75rem 0 0;">
+                Les paris disponibles arrivent à l'étape suivante.
+            </p>
+        </div>
+
     </div>
 </div>
 {% endblock %}
