@@ -7,6 +7,7 @@ use App\Entity\SportEvent;
 use App\Form\SportEventType;
 use App\Repository\OutcomeRepository;
 use App\Repository\SportEventRepository;
+use App\Security\Voter\SportEventVoter;
 use App\Service\PayoutService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -58,14 +59,7 @@ class SportEventController extends AbstractController
     #[Route('/{id}/edit', name: 'edit')]
     public function edit(SportEvent $event, Request $request, EntityManagerInterface $em): Response
     {
-        if ($event->getManager() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        if ($event->getStatus() !== SportEvent::STATUS_BROUILLON) {
-            $this->addFlash('error', 'Seuls les brouillons peuvent être modifiés.');
-            return $this->redirectToRoute('app_manager_event_index');
-        }
+        $this->denyAccessUnlessGranted(SportEventVoter::EDIT, $event);
 
         $form = $this->createForm(SportEventType::class, $event);
         $form->handleRequest($request);
@@ -85,14 +79,7 @@ class SportEventController extends AbstractController
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     public function delete(SportEvent $event, Request $request, EntityManagerInterface $em): Response
     {
-        if ($event->getManager() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        if ($event->getStatus() !== SportEvent::STATUS_BROUILLON) {
-            $this->addFlash('error', 'Seuls les brouillons peuvent être supprimés.');
-            return $this->redirectToRoute('app_manager_event_index');
-        }
+        $this->denyAccessUnlessGranted(SportEventVoter::DELETE, $event);
 
         if ($this->isCsrfTokenValid('delete-event-'.$event->getId(), $request->request->get('_token'))) {
             $em->remove($event);
@@ -106,14 +93,7 @@ class SportEventController extends AbstractController
     #[Route('/{id}/publish', name: 'publish', methods: ['POST'])]
     public function publish(SportEvent $event, Request $request, EntityManagerInterface $em): Response
     {
-        if ($event->getManager() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        if ($event->getStatus() !== SportEvent::STATUS_BROUILLON) {
-            $this->addFlash('error', 'Cet événement ne peut pas être publié.');
-            return $this->redirectToRoute('app_manager_event_index');
-        }
+        $this->denyAccessUnlessGranted(SportEventVoter::PUBLISH, $event);
 
         if ($event->getOutcomes()->isEmpty()) {
             $this->addFlash('error', 'Ajoutez au moins une issue avant de publier.');
@@ -132,14 +112,7 @@ class SportEventController extends AbstractController
     #[Route('/{id}/close', name: 'close', methods: ['POST'])]
     public function close(SportEvent $event, Request $request, EntityManagerInterface $em): Response
     {
-        if ($event->getManager() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        if ($event->getStatus() !== SportEvent::STATUS_PUBLIE) {
-            $this->addFlash('error', 'Seuls les événements publiés peuvent être fermés.');
-            return $this->redirectToRoute('app_manager_event_index');
-        }
+        $this->denyAccessUnlessGranted(SportEventVoter::CLOSE, $event);
 
         if ($this->isCsrfTokenValid('close-event-'.$event->getId(), $request->request->get('_token'))) {
             $event->setStatus(SportEvent::STATUS_FERME);
@@ -153,15 +126,7 @@ class SportEventController extends AbstractController
     #[Route('/{id}/cancel', name: 'cancel', methods: ['POST'])]
     public function cancel(SportEvent $event, Request $request, EntityManagerInterface $em, PayoutService $payout): Response
     {
-        if ($event->getManager() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $cancellable = [SportEvent::STATUS_BROUILLON, SportEvent::STATUS_PUBLIE, SportEvent::STATUS_FERME];
-        if (!in_array($event->getStatus(), $cancellable, true)) {
-            $this->addFlash('error', 'Cet événement ne peut pas être annulé.');
-            return $this->redirectToRoute('app_manager_event_index');
-        }
+        $this->denyAccessUnlessGranted(SportEventVoter::CANCEL, $event);
 
         if ($this->isCsrfTokenValid('cancel-event-'.$event->getId(), $request->request->get('_token'))) {
             $event->setStatus(SportEvent::STATUS_ANNULE);
@@ -182,14 +147,7 @@ class SportEventController extends AbstractController
         PayoutService   $payout,
         OutcomeRepository $outcomeRepo,
     ): Response {
-        if ($event->getManager() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        if ($event->getStatus() !== SportEvent::STATUS_FERME) {
-            $this->addFlash('error', 'Seuls les événements fermés peuvent recevoir un résultat.');
-            return $this->redirectToRoute('app_manager_event_index');
-        }
+        $this->denyAccessUnlessGranted(SportEventVoter::RESULT, $event);
 
         if ($request->isMethod('POST')) {
             $token     = $request->request->get('_token');
