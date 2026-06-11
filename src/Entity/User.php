@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'date')]
     #[Assert\NotBlank]
-    private ?\DateTimeInterface $birthdate = null;
+    private \DateTimeInterface $birthdate;
 
     #[ORM\Column]
     private bool $isActive = true;
