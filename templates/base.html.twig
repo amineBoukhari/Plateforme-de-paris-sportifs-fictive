@@ -1,24 +1,76 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BetSport{% endblock %}</title>
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-        {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphpHotReload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
-    </head>
-    <body>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%220.9em%22 font-size=%2226%22>♛</text></svg>">
+
+    {% block stylesheets %}{% endblock %}
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+
+    <nav class="nav-bar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+            <a href="{{ path('app_login') }}" style="display:flex;align-items:center;gap:0.625rem;text-decoration:none;">
+                <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M4 31L7.5 14L14.5 20L20 5L25.5 20L32.5 14L36 31H4Z"
+                          stroke="rgba(212,175,55,1)" stroke-width="2.2" fill="none"
+                          stroke-linejoin="round" stroke-linecap="round"/>
+                    <line x1="4" y1="36" x2="36" y2="36"
+                          stroke="rgba(212,175,55,1)" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+                <span style="font-family:'Cinzel',serif;font-size:1.125rem;font-weight:700;letter-spacing:0.10em;color:rgba(212,175,55,1);">BetSport</span>
+            </a>
+
+            <div class="flex items-center gap-5">
+                {% if app.user %}
+                    <span style="color:rgba(130,126,148,1);font-size:0.8rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ app.user.email }}</span>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_admin_dashboard') }}" class="nav-link">Administration</a>
+                    {% endif %}
+                    {% if is_granted('ROLE_MANAGER') %}
+                        <a href="{{ path('app_manager_dashboard') }}" class="nav-link">Gestionnaire</a>
+                    {% endif %}
+                    <a href="{{ path('app_user_dashboard') }}" class="nav-link">Mon espace</a>
+                    <a href="{{ path('app_logout') }}" class="btn-danger">Déconnexion</a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
+                    <a href="{{ path('app_register') }}" class="btn-ghost">Inscription</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="{{ label == 'error' ? 'flash-error' : 'flash-success' }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
         {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <footer class="site-footer mt-auto">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span style="font-family:'Cinzel',serif;font-size:0.6875rem;letter-spacing:0.18em;color:rgba(212,175,55,1);font-weight:700;">BETSPORT</span>
+            <p style="font-size:0.6875rem;color:rgba(90,88,105,1);text-align:center;">
+                Plateforme fictive à but pédagogique —
+                <span style="color:rgba(130,126,148,1);">Jouez de manière responsable.</span>
+            </p>
+            <span style="font-size:0.6875rem;color:rgba(60,58,75,1);">© 2025–2026 ESGI</span>
+        </div>
+    </footer>
+
+</body>
 </html>
