@@ -36,4 +36,20 @@ class BetRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function sumBetsSince(int $userId, \DateTimeImmutable $since): float
+    {
+        $result = $this->createQueryBuilder('b')
+            ->select('SUM(b.amount)')
+            ->where('b.user = :userId')
+            ->andWhere('b.status != :cancelled')
+            ->andWhere('b.createdAt >= :since')
+            ->setParameter('userId', $userId)
+            ->setParameter('cancelled', Bet::STATUS_ANNULE)
+            ->setParameter('since', $since)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (float) ($result ?? 0);
+    }
 }

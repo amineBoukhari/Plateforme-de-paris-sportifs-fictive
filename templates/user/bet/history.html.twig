@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des paris — BetSport{% endblock %}
+
+{% block body %}
+<div>
+    <div style="margin-bottom:2rem;">
+        <p style="font-size:0.6875rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(212,175,55,1);margin:0 0 0.4rem;">Mon compte</p>
+        <h1 style="font-family:'Cinzel',serif;font-size:1.875rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">Historique des paris</h1>
+    </div>
+
+    {% if bets is empty %}
+        <div style="border:1px solid rgba(85,68,18,0.4);border-radius:2px;padding:3rem;text-align:center;">
+            <p style="color:rgba(130,126,148,1);font-size:0.9rem;margin:0 0 1rem;">Vous n'avez pas encore placé de pari.</p>
+            <a href="{{ path('app_user_bet_index') }}" class="btn-ghost">Voir les événements</a>
+        </div>
+    {% else %}
+        <div style="border:1px solid rgba(85,68,18,0.4);border-radius:2px;overflow:hidden;">
+
+            <div style="display:grid;grid-template-columns:1fr 160px 90px 90px 100px;gap:1rem;padding:0.75rem 1.25rem;background:rgba(20,20,34,1);border-bottom:1px solid rgba(85,68,18,0.4);">
+                <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Événement / Issue</span>
+                <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Date</span>
+                <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Mise</span>
+                <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Cote</span>
+                <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Statut</span>
+            </div>
+
+            {% for bet in bets %}
+                {% set statusColor = {
+                    'EN_ATTENTE': 'rgba(212,175,55,1)',
+                    'GAGNE':      'rgba(52,168,110,1)',
+                    'PERDU':      'rgba(180,60,60,1)',
+                    'ANNULE':     'rgba(130,126,148,1)'
+                } %}
+
+                <div style="display:grid;grid-template-columns:1fr 160px 90px 90px 100px;gap:1rem;align-items:center;padding:1rem 1.25rem;border-bottom:{{ not loop.last ? '1px solid rgba(36,36,58,1)' : 'none' }};background:rgba(14,14,24,1);">
+
+                    <div style="min-width:0;">
+                        <p style="font-size:0.875rem;font-weight:500;color:rgba(238,232,215,1);margin:0 0 0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ bet.sportEvent.name }}</p>
+                        <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ bet.outcome.label }}</p>
+                    </div>
+
+                    <p style="font-size:0.8125rem;color:rgba(130,126,148,1);margin:0;">{{ bet.createdAt|date('d/m/Y H:i') }}</p>
+
+                    <p style="font-size:0.8125rem;font-weight:600;color:rgba(238,232,215,1);margin:0;">{{ bet.amount|number_format(2, ',', ' ') }} €</p>
+
+                    <p style="font-size:0.8125rem;font-family:'Cinzel',serif;color:rgba(212,175,55,1);margin:0;">{{ bet.oddsAtBet }}</p>
+
+                    <p style="font-size:0.75rem;font-weight:600;margin:0;color:{{ statusColor[bet.status] ?? 'rgba(130,126,148,1)' }};">
+                        {{ bet.status|replace({'_': ' '}) }}
+                        {% if bet.status == 'GAGNE' %}
+                            <br><span style="color:rgba(52,168,110,0.8);font-size:0.6875rem;">+{{ (bet.amount * bet.oddsAtBet)|number_format(2, ',', ' ') }} €</span>
+                        {% endif %}
+                    </p>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
