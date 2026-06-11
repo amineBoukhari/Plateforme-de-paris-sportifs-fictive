@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dépôt — BetSport{% endblock %}
+
+{% block body %}
+<div style="max-width:480px;margin:0 auto;animation:fadeUp 0.5s cubic-bezier(0.25,0.46,0.45,0.94) both;">
+
+    <div style="margin-bottom:2rem;">
+        <a href="{{ path('app_user_dashboard') }}" style="font-size:0.8125rem;color:rgba(130,126,148,1);text-decoration:none;">← Mon espace</a>
+        <h1 style="font-family:'Cinzel',serif;font-size:1.75rem;font-weight:700;color:rgba(238,232,215,1);margin:0.75rem 0 0;">Dépôt</h1>
+    </div>
+
+    {# Current balance #}
+    <div class="card-luxury" style="text-align:center;padding:2rem;margin-bottom:1.5rem;">
+        <p style="font-size:0.6875rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(130,126,148,1);margin:0 0 0.75rem;">Solde actuel</p>
+        <p style="font-family:'Cinzel',serif;font-size:2.5rem;font-weight:700;color:rgba(212,175,55,1);margin:0;letter-spacing:0.04em;">
+            {{ app.user.wallet|number_format(2, ',', ' ') }} €
+        </p>
+    </div>
+
+    {# Deposit form #}
+    <div class="card-luxury">
+        <form method="POST" action="{{ path('app_user_wallet_deposit') }}"
+              style="display:flex;flex-direction:column;gap:1.5rem;">
+            <input type="hidden" name="_token" value="{{ csrf_token('wallet_deposit') }}">
+
+            {# Quick-select amounts #}
+            <div>
+                <p class="label-luxury" style="margin-bottom:0.75rem;">Montant rapide</p>
+                <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0.5rem;">
+                    {% for preset in [10, 25, 50, 100, 200] %}
+                        <button type="button" class="quick-amount"
+                                data-value="{{ preset }}"
+                                style="padding:0.5rem 0;font-size:0.8125rem;font-weight:500;
+                                       color:rgba(155,125,38,1);background:rgba(20,20,34,1);
+                                       border:1px solid rgba(85,68,18,1);border-radius:2px;
+                                       cursor:pointer;transition:all 0.18s;">
+                            {{ preset }} €
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# Custom amount #}
+            <div>
+                <label class="label-luxury" for="amount">Montant personnalisé (€)</label>
+                <input type="number"
+                       id="amount"
+                       name="amount"
+                       min="1"
+                       max="5000"
+                       step="0.01"
+                       placeholder="Ex : 75.00"
+                       class="field-luxury"
+                       style="margin-top:0.5rem;"
+                       required>
+            </div>
+
+            <button type="submit" class="btn-gold">Créditer mon solde</button>
+
+        
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    const input  = document.getElementById('amount');
+    const btns   = document.querySelectorAll('.quick-amount');
+    const active = 'rgba(212,175,55,1)';
+    const normal = 'rgba(155,125,38,1)';
+    const activeBg  = 'rgba(36,28,8,1)';
+    const normalBg  = 'rgba(20,20,34,1)';
+    const activeBdr = 'rgba(212,175,55,0.6)';
+    const normalBdr = 'rgba(85,68,18,1)';
+
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            input.value = btn.dataset.value;
+
+            btns.forEach(b => {
+                b.style.color      = normal;
+                b.style.background = normalBg;
+                b.style.borderColor = normalBdr;
+            });
+            btn.style.color       = active;
+            btn.style.background  = activeBg;
+            btn.style.borderColor = activeBdr;
+        });
+
+        btn.addEventListener('mouseover', () => {
+            if (input.value !== btn.dataset.value) {
+                btn.style.borderColor = 'rgba(155,125,38,0.6)';
+            }
+        });
+        btn.addEventListener('mouseout', () => {
+            if (input.value !== btn.dataset.value) {
+                btn.style.borderColor = normalBdr;
+            }
+        });
+    });
+})();
+</script>
+{% endblock %}

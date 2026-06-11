@@ -34,7 +34,23 @@
 
             <div class="flex items-center gap-5">
                 {% if app.user %}
-                    <span style="color:rgba(130,126,148,1);font-size:0.8rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ app.user.email }}</span>
+                    <span style="color:rgba(130,126,148,1);font-size:0.8rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ app.user.email }}</span>
+                    <a href="{{ path('app_user_wallet_deposit') }}"
+                       style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;
+                              border:1px solid rgba(85,68,18,1);border-radius:2px;
+                              background:rgba(20,20,34,1);text-decoration:none;
+                              transition:border-color 0.18s,background 0.18s;"
+                       onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.background='rgba(28,24,8,1)'"
+                       onmouseout="this.style.borderColor='rgba(85,68,18,1)';this.style.background='rgba(20,20,34,1)'">
+                        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="10" cy="10" r="8.5" stroke="rgba(212,175,55,1)" stroke-width="1.8"/>
+                            <path d="M10 5v10M7.5 7.5C7.5 6.4 8.6 5.5 10 5.5s2.5.9 2.5 2-.9 1.8-2.5 2c-1.6.2-2.5 1-2.5 2.1s1.1 2 2.5 2 2.5-.9 2.5-2"
+                                  stroke="rgba(212,175,55,1)" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span style="font-family:'Cinzel',serif;font-size:0.75rem;font-weight:600;color:rgba(212,175,55,1);letter-spacing:0.04em;">
+                            {{ app.user.wallet|number_format(2, ',', '\u{202F}') }} €
+                        </span>
+                    </a>
                     {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('app_admin_dashboard') }}" class="nav-link">Administration</a>
                     {% endif %}
@@ -64,10 +80,7 @@
     <footer class="site-footer mt-auto">
         <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
             <span style="font-family:'Cinzel',serif;font-size:0.6875rem;letter-spacing:0.18em;color:rgba(212,175,55,1);font-weight:700;">BETSPORT</span>
-            <p style="font-size:0.6875rem;color:rgba(90,88,105,1);text-align:center;">
-                Plateforme fictive à but pédagogique —
-                <span style="color:rgba(130,126,148,1);">Jouez de manière responsable.</span>
-            </p>
+           
             <span style="font-size:0.6875rem;color:rgba(60,58,75,1);">© 2025–2026 ESGI</span>
         </div>
     </footer>
