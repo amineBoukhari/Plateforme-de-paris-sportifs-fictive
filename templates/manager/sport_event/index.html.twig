@@ -95,7 +95,10 @@
                         {% endif %}
 
                         {% if event.status == 'FERME' %}
-                            <span style="font-size:0.75rem;color:rgba(130,126,148,1);">En attente résultat</span>
+                            <a href="{{ path('app_manager_event_result', {id: event.id}) }}"
+                               style="font-size:0.75rem;color:rgba(52,168,110,1);text-decoration:none;padding:0.25rem 0.625rem;border:1px solid rgba(52,168,110,0.4);border-radius:1px;white-space:nowrap;">
+                                Saisir résultat
+                            </a>
                             <form method="post" action="{{ path('app_manager_event_cancel', {id: event.id}) }}" style="margin:0;">
                                 <input type="hidden" name="_token" value="{{ csrf_token('cancel-event-'~event.id) }}">
                                 <button type="submit" class="btn-danger" style="font-size:0.75rem;padding:0.25rem 0.625rem;"

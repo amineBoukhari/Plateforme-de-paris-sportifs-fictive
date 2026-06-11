@@ -2,9 +2,12 @@
 
 namespace App\Controller\Manager;
 
+use App\Entity\Outcome;
 use App\Entity\SportEvent;
 use App\Form\SportEventType;
+use App\Repository\OutcomeRepository;
 use App\Repository\SportEventRepository;
+use App\Service\PayoutService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -143,7 +146,7 @@ class SportEventController extends AbstractController
     }
 
     #[Route('/{id}/cancel', name: 'cancel', methods: ['POST'])]
-    public function cancel(SportEvent $event, Request $request, EntityManagerInterface $em): Response
+    public function cancel(SportEvent $event, Request $request, EntityManagerInterface $em, PayoutService $payout): Response
     {
         if ($event->getManager() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
@@ -158,9 +161,63 @@ class SportEventController extends AbstractController
         if ($this->isCsrfTokenValid('cancel-event-'.$event->getId(), $request->request->get('_token'))) {
             $event->setStatus(SportEvent::STATUS_ANNULE);
             $em->flush();
-            $this->addFlash('success', 'Événement annulé.');
+            $payout->refund($event);
+            $this->addFlash('success', 'Événement annulé — paris remboursés.');
         }
 
         return $this->redirectToRoute('app_manager_event_index');
+    }
+
+    // US-55 + US-56 — Saisir le résultat et déclencher le calcul des gains
+    #[Route('/{id}/result', name: 'result')]
+    public function result(
+        SportEvent      $event,
+        Request         $request,
+        EntityManagerInterface $em,
+        PayoutService   $payout,
+        OutcomeRepository $outcomeRepo,
+    ): Response {
+        if ($event->getManager() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if ($event->getStatus() !== SportEvent::STATUS_FERME) {
+            $this->addFlash('error', 'Seuls les événements fermés peuvent recevoir un résultat.');
+            return $this->redirectToRoute('app_manager_event_index');
+        }
+
+        if ($request->isMethod('POST')) {
+            $token     = $request->request->get('_token');
+            $outcomeId = (int) $request->request->get('outcome_id');
+
+            if (!$this->isCsrfTokenValid('result-event-'.$event->getId(), $token)) {
+                $this->addFlash('error', 'Token invalide.');
+                return $this->redirectToRoute('app_manager_event_result', ['id' => $event->getId()]);
+            }
+
+            $winningOutcome = $outcomeRepo->find($outcomeId);
+
+            if (!$winningOutcome || $winningOutcome->getSportEvent() !== $event) {
+                $this->addFlash('error', 'Issue invalide.');
+                return $this->redirectToRoute('app_manager_event_result', ['id' => $event->getId()]);
+            }
+
+            $winningOutcome->setIsWinner(true);
+            $event->setStatus(SportEvent::STATUS_TERMINE);
+            $em->flush();
+
+            $payout->payout($event, $winningOutcome);
+
+            $this->addFlash('success', sprintf(
+                'Résultat enregistré : "%s". Les gains ont été distribués.',
+                $winningOutcome->getLabel()
+            ));
+
+            return $this->redirectToRoute('app_manager_event_index');
+        }
+
+        return $this->render('manager/sport_event/result.html.twig', [
+            'event' => $event,
+        ]);
     }
 }

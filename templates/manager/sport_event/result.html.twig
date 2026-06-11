@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Saisir le résultat — {{ event.name }}{% endblock %}
+
+{% block body %}
+<div style="max-width:560px;margin:0 auto;">
+
+    <a href="{{ path('app_manager_event_index') }}"
+       style="font-size:0.8rem;color:rgba(130,126,148,1);text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;margin-bottom:1.5rem;">
+        ← Retour aux événements
+    </a>
+
+    <div style="margin-bottom:1.5rem;">
+        <p style="font-size:0.6875rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(212,175,55,1);margin:0 0 0.4rem;">Résultat</p>
+        <h1 style="font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">{{ event.name }}</h1>
+        <p style="font-size:0.8125rem;color:rgba(130,126,148,1);margin:0.5rem 0 0;">{{ event.eventDate|date('d/m/Y à H:i') }}</p>
+    </div>
+
+    <div class="card-luxury">
+        <p style="font-size:0.8125rem;color:rgba(130,126,148,1);margin:0 0 1.25rem;">
+            Sélectionnez l'issue gagnante. Les gains seront calculés et distribués immédiatement.
+        </p>
+
+        <form method="post" style="display:flex;flex-direction:column;gap:0.75rem;">
+            <input type="hidden" name="_token" value="{{ csrf_token('result-event-'~event.id) }}">
+
+            {% for outcome in event.outcomes %}
+                <label style="display:flex;align-items:center;gap:0.875rem;border:1px solid rgba(85,68,18,0.5);border-radius:2px;padding:1rem 1.125rem;cursor:pointer;transition:border-color 0.18s,background 0.18s;"
+                       onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.background='rgba(20,18,8,0.6)'"
+                       onmouseout="this.style.borderColor='rgba(85,68,18,0.5)';this.style.background='transparent'">
+                    <input type="radio" name="outcome_id" value="{{ outcome.id }}" required
+                           style="accent-color:rgba(212,175,55,1);width:1rem;height:1rem;flex-shrink:0;">
+                    <div style="flex:1;min-width:0;">
+                        <p style="font-size:0.9375rem;font-weight:500;color:rgba(238,232,215,1);margin:0;">{{ outcome.label }}</p>
+                    </div>
+                    <span style="font-family:'Cinzel',serif;font-size:1.125rem;font-weight:700;color:rgba(212,175,55,1);white-space:nowrap;">× {{ outcome.odds }}</span>
+                </label>
+            {% endfor %}
+
+            <button type="submit" class="btn-gold" style="margin-top:0.75rem;"
+                    onclick="return confirm('Confirmer ce résultat ? L\'opération est irréversible.')">
+                Valider le résultat &amp; distribuer les gains
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
