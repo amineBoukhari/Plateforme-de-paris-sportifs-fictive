@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs — Administration{% endblock %}
+
+{% block body %}
+<div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;">
+        <div>
+            <p style="font-size:0.6875rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(212,175,55,1);margin:0 0 0.4rem;">Administration</p>
+            <h1 style="font-family:'Cinzel',serif;font-size:1.875rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">Utilisateurs</h1>
+        </div>
+        <a href="{{ path('app_admin_dashboard') }}" class="btn-ghost" style="width:auto;padding:0.5rem 1.25rem;">
+            ← Tableau de bord
+        </a>
+    </div>
+
+    <div style="border:1px solid rgba(85,68,18,0.4);border-radius:2px;overflow:hidden;">
+
+        <div style="display:grid;grid-template-columns:2fr 120px 80px 100px 200px;gap:1rem;padding:0.75rem 1.25rem;background:rgba(20,20,34,1);border-bottom:1px solid rgba(85,68,18,0.4);">
+            <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Email</span>
+            <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Rôle</span>
+            <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Statut</span>
+            <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Solde</span>
+            <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Actions</span>
+        </div>
+
+        {% for user in users %}
+            {% set isAdmin   = 'ROLE_ADMIN'   in user.roles %}
+            {% set isManager = 'ROLE_MANAGER' in user.roles %}
+            {% set isSelf    = user == app.user %}
+
+            <div style="display:grid;grid-template-columns:2fr 120px 80px 100px 200px;gap:1rem;align-items:center;padding:0.875rem 1.25rem;border-bottom:{{ not loop.last ? '1px solid rgba(36,36,58,1)' : 'none' }};background:rgba(14,14,24,1);">
+
+                <p style="font-size:0.875rem;color:rgba(238,232,215,1);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    {{ user.email }}
+                    {% if isSelf %}<span style="font-size:0.6875rem;color:rgba(130,126,148,1);"> (vous)</span>{% endif %}
+                </p>
+
+                <p style="font-size:0.75rem;margin:0;color:{% if isAdmin %}rgba(212,175,55,1){% elseif isManager %}rgba(100,180,255,1){% else %}rgba(130,126,148,1){% endif %};">
+                    {% if isAdmin %}Admin{% elseif isManager %}Manager{% else %}Utilisateur{% endif %}
+                </p>
+
+                <p style="font-size:0.75rem;font-weight:600;margin:0;color:{{ user.isActive ? 'rgba(52,168,110,1)' : 'rgba(180,60,60,1)' }};">
+                    {{ user.isActive ? 'Actif' : 'Suspendu' }}
+                </p>
+
+                <p style="font-size:0.8125rem;color:rgba(212,175,55,1);font-family:'Cinzel',serif;margin:0;">
+                    {{ user.wallet|number_format(2, ',', ' ') }} €
+                </p>
+
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    {% if not isSelf and not isAdmin %}
+
+                        {# Suspend / Activate #}
+                        {% if user.isActive %}
+                            <form method="post" action="{{ path('app_admin_user_suspend', {id: user.id}) }}" style="margin:0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('suspend-user-'~user.id) }}">
+                                <button type="submit" class="btn-danger" style="font-size:0.75rem;padding:0.25rem 0.625rem;"
+                                        onclick="return confirm('Suspendre ce compte ?')">
+                                    Suspendre
+                                </button>
+                            </form>
+                        {% else %}
+                            <form method="post" action="{{ path('app_admin_user_activate', {id: user.id}) }}" style="margin:0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('activate-user-'~user.id) }}">
+                                <button type="submit" style="font-size:0.75rem;padding:0.25rem 0.625rem;background:rgba(8,32,20,1);color:rgba(52,168,110,1);border:1px solid rgba(52,168,110,0.4);border-radius:1px;cursor:pointer;">
+                                    Réactiver
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {# Toggle Manager #}
+                        <form method="post" action="{{ path('app_admin_user_toggle_manager', {id: user.id}) }}" style="margin:0;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle-manager-'~user.id) }}">
+                            <button type="submit"
+                                    style="font-size:0.75rem;padding:0.25rem 0.625rem;border-radius:1px;cursor:pointer;border:1px solid rgba(100,180,255,0.3);background:rgba(10,20,40,1);color:rgba(100,180,255,1);"
+                                    onclick="return confirm('{{ isManager ? 'Retirer le rôle Manager ?' : 'Attribuer le rôle Manager ?' }}')">
+                                {{ isManager ? '- Manager' : '+ Manager' }}
+                            </button>
+                        </form>
+
+                    {% else %}
+                        <span style="font-size:0.75rem;color:rgba(70,68,85,1);">—</span>
+                    {% endif %}
+                </div>
+
+            </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}

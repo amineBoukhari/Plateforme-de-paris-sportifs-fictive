@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration — BetSport{% endblock %}
+
+{% block body %}
+<div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;">
+        <div>
+            <p style="font-size:0.6875rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(212,175,55,1);margin:0 0 0.4rem;">Administration</p>
+            <h1 style="font-family:'Cinzel',serif;font-size:1.875rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">Tableau de bord</h1>
+        </div>
+        <a href="{{ path('app_admin_user_index') }}" class="btn-ghost" style="width:auto;padding:0.5rem 1.25rem;">
+            Gérer les utilisateurs
+        </a>
+    </div>
+
+    {# Stats #}
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;">
+
+        {% set cards = [
+            { label: 'Utilisateurs', value: stats.total_users, sub: stats.active_users ~ ' actifs' },
+            { label: 'Événements', value: stats.total_events, sub: stats.published_events ~ ' publiés' },
+            { label: 'Paris total', value: stats.total_bets, sub: stats.bets_pending ~ ' en attente' },
+            { label: 'Mises totales', value: stats.total_wagered|number_format(2, ',', ' ') ~ ' €', sub: stats.bets_won ~ ' gagnés' },
+        ] %}
+
+        {% for card in cards %}
+            <div class="card-luxury" style="text-align:center;">
+                <p style="font-size:0.6875rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(130,126,148,1);margin:0 0 0.5rem;">{{ card.label }}</p>
+                <p style="font-family:'Cinzel',serif;font-size:1.75rem;font-weight:700;color:rgba(212,175,55,1);margin:0;">{{ card.value }}</p>
+                <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0.4rem 0 0;">{{ card.sub }}</p>
+            </div>
+        {% endfor %}
+
+    </div>
+
+    {# Recent bets #}
+    <div>
+        <h2 style="font-family:'Cinzel',serif;font-size:1.125rem;font-weight:700;color:rgba(238,232,215,1);margin:0 0 1rem;">Derniers paris</h2>
+
+        {% if recentBets is empty %}
+            <p style="color:rgba(130,126,148,1);font-size:0.875rem;">Aucun pari enregistré.</p>
+        {% else %}
+            <div style="border:1px solid rgba(85,68,18,0.4);border-radius:2px;overflow:hidden;">
+                <div style="display:grid;grid-template-columns:2fr 1fr 90px 90px 100px;gap:1rem;padding:0.75rem 1.25rem;background:rgba(20,20,34,1);border-bottom:1px solid rgba(85,68,18,0.4);">
+                    <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Utilisateur / Événement</span>
+                    <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Date</span>
+                    <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Mise</span>
+                    <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Cote</span>
+                    <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Statut</span>
+                </div>
+
+                {% set statusColor = {'EN_ATTENTE':'rgba(212,175,55,1)','GAGNE':'rgba(52,168,110,1)','PERDU':'rgba(180,60,60,1)','ANNULE':'rgba(130,126,148,1)'} %}
+
+                {% for bet in recentBets %}
+                    <div style="display:grid;grid-template-columns:2fr 1fr 90px 90px 100px;gap:1rem;align-items:center;padding:0.875rem 1.25rem;border-bottom:{{ not loop.last ? '1px solid rgba(36,36,58,1)' : 'none' }};background:rgba(14,14,24,1);">
+                        <div style="min-width:0;">
+                            <p style="font-size:0.8125rem;font-weight:500;color:rgba(238,232,215,1);margin:0 0 0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ bet.user.email }}</p>
+                            <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ bet.sportEvent.name }}</p>
+                        </div>
+                        <p style="font-size:0.8rem;color:rgba(130,126,148,1);margin:0;">{{ bet.createdAt|date('d/m/Y') }}</p>
+                        <p style="font-size:0.8125rem;font-weight:600;color:rgba(238,232,215,1);margin:0;">{{ bet.amount|number_format(2, ',', ' ') }} €</p>
+                        <p style="font-size:0.8125rem;font-family:'Cinzel',serif;color:rgba(212,175,55,1);margin:0;">{{ bet.oddsAtBet }}</p>
+                        <p style="font-size:0.75rem;font-weight:600;margin:0;color:{{ statusColor[bet.status] ?? 'rgba(130,126,148,1)' }};">{{ bet.status|replace({'_':' '}) }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
