@@ -13,7 +13,6 @@
 | Composer | 2.x |
 | PostgreSQL | 14+ |
 | Symfony CLI | 5.x |
-| Node.js + npm | 18+ |
 
 ---
 
