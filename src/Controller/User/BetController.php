@@ -2,6 +2,8 @@
 
 namespace App\Controller\User;
 
+use App\Entity\SportEvent;
+use App\Repository\BetRepository;
 use App\Repository\OutcomeRepository;
 use App\Repository\SportEventRepository;
 use App\Service\BettingService;
@@ -23,12 +25,26 @@ class BetController extends AbstractController
         ]);
     }
 
+    #[Route('/event/{id}', name: 'show')]
+    public function show(SportEvent $event): Response
+    {
+        if ($event->getStatus() !== SportEvent::STATUS_PUBLIE) {
+            $this->addFlash('error', 'Cet événement n\'est plus ouvert aux paris.');
+            return $this->redirectToRoute('app_user_bet_index');
+        }
+
+        return $this->render('user/bet/show.html.twig', [
+            'event' => $event,
+        ]);
+    }
+
     #[Route('/place', name: 'place', methods: ['POST'])]
     public function place(Request $request, BettingService $betting, OutcomeRepository $outcomes): Response
     {
         $token     = $request->request->get('_token');
         $outcomeId = (int) $request->request->get('outcome_id');
         $amount    = (float) $request->request->get('amount', 0);
+        $eventId   = (int) $request->request->get('event_id');
 
         if (!$this->isCsrfTokenValid('bet_place', $token)) {
             $this->addFlash('error', 'Token invalide.');
@@ -45,15 +61,26 @@ class BetController extends AbstractController
         try {
             $bet = $betting->place($this->getUser(), $outcome, $amount);
             $this->addFlash('success', sprintf(
-                'Pari de %.2f € placé sur "%s" à %.2f.',
+                'Pari de %.2f € placé sur "%s" à la cote %.2f. Gain potentiel : %.2f €.',
                 $amount,
                 $outcome->getLabel(),
-                (float) $bet->getOddsAtBet()
+                (float) $bet->getOddsAtBet(),
+                $amount * (float) $bet->getOddsAtBet()
             ));
         } catch (\LogicException $e) {
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->redirectToRoute('app_user_bet_index');
+        return $this->redirectToRoute('app_user_bet_show', ['id' => $outcome->getSportEvent()->getId()]);
+    }
+
+    #[Route('/history', name: 'history')]
+    public function history(BetRepository $betRepository): Response
+    {
+        $bets = $betRepository->findByUser($this->getUser()->getId());
+
+        return $this->render('user/bet/history.html.twig', [
+            'bets' => $bets,
+        ]);
     }
 }

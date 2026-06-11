@@ -34,9 +34,9 @@
             <p style="font-family:'Cinzel',serif;font-size:2rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">
                 {{ app.user.bets|length }}
             </p>
-            <p style="font-size:0.8125rem;color:rgba(130,126,148,1);margin:0.75rem 0 0;">
-                Les paris disponibles arrivent à l'étape suivante.
-            </p>
+            <a href="{{ path('app_user_bet_history') }}" class="btn-ghost" style="margin-top:0.75rem;text-align:center;text-decoration:none;display:block;">
+                Voir mes paris
+            </a>
         </div>
 
     </div>

@@ -57,6 +57,7 @@
                     {% if is_granted('ROLE_MANAGER') %}
                         <a href="{{ path('app_manager_dashboard') }}" class="nav-link">Gestionnaire</a>
                     {% endif %}
+                    <a href="{{ path('app_user_bet_index') }}" class="nav-link">Paris</a>
                     <a href="{{ path('app_user_dashboard') }}" class="nav-link">Mon espace</a>
                     <a href="{{ path('app_logout') }}" class="btn-danger">Déconnexion</a>
                 {% else %}
