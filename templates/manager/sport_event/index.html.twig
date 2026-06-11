@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes événements — BetSport{% endblock %}
+
+{% block body %}
+<div style="animation:fadeUp 0.5s cubic-bezier(0.25,0.46,0.45,0.94) both;">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;">
+        <div>
+            <p style="font-size:0.6875rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(212,175,55,1);margin:0 0 0.4rem;">Gestionnaire</p>
+            <h1 style="font-family:'Cinzel',serif;font-size:1.875rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">Mes événements</h1>
+        </div>
+        <a href="{{ path('app_manager_event_new') }}" class="btn-gold" style="width:auto;padding:0.625rem 1.5rem;">
+            + Nouvel événement
+        </a>
+    </div>
+
+    {% if events is empty %}
+        <div style="border:1px solid rgba(85,68,18,0.4);border-radius:2px;padding:3rem;text-align:center;">
+            <p style="color:rgba(130,126,148,1);font-size:0.9rem;margin:0 0 1rem;">Aucun événement créé.</p>
+            <a href="{{ path('app_manager_event_new') }}" class="btn-ghost">Créer un événement</a>
+        </div>
+    {% else %}
+        <div style="border:1px solid rgba(85,68,18,0.4);border-radius:2px;overflow:hidden;">
+
+            {# Table header #}
+            <div style="display:grid;grid-template-columns:1fr 100px 140px 180px;gap:1rem;padding:0.75rem 1.25rem;background:rgba(20,20,34,1);border-bottom:1px solid rgba(85,68,18,0.4);">
+                <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Événement</span>
+                <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Sport</span>
+                <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Statut</span>
+                <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Actions</span>
+            </div>
+
+            {% for event in events %}
+                <div style="display:grid;grid-template-columns:1fr 100px 140px 180px;gap:1rem;align-items:center;padding:1rem 1.25rem;border-bottom:{{ not loop.last ? '1px solid rgba(36,36,58,1)' : 'none' }};background:rgba(14,14,24,1);">
+
+                    {# Name + date #}
+                    <div style="min-width:0;">
+                        <p style="font-size:0.9375rem;font-weight:500;color:rgba(238,232,215,1);margin:0 0 0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ event.name }}</p>
+                        <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0;">{{ event.eventDate|date('d/m/Y H:i') }}</p>
+                    </div>
+
+                    {# Sport #}
+                    <p style="font-size:0.8125rem;color:rgba(130,126,148,1);margin:0;">{{ event.sport }}</p>
+
+                    {# Status badge #}
+                    <div>{% include 'manager/_status_badge.html.twig' with { status: event.status } %}</div>
+
+                    {# Actions #}
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+
+                        {% if event.status == 'BROUILLON' %}
+                            <a href="{{ path('app_manager_event_edit', {id: event.id}) }}"
+                               style="font-size:0.75rem;color:rgba(212,175,55,1);text-decoration:none;padding:0.25rem 0.625rem;border:1px solid rgba(85,68,18,1);border-radius:1px;white-space:nowrap;transition:border-color 0.2s;"
+                               onmouseover="this.style.borderColor='rgba(212,175,55,1)'"
+                               onmouseout="this.style.borderColor='rgba(85,68,18,1)'">
+                                Modifier
+                            </a>
+
+                            <form method="post" action="{{ path('app_manager_event_publish', {id: event.id}) }}" style="margin:0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('publish-event-'~event.id) }}">
+                                <button type="submit"
+                                        style="font-size:0.75rem;background:rgba(8,32,20,1);color:rgba(52,168,110,1);border:1px solid rgba(52,168,110,0.4);border-radius:1px;padding:0.25rem 0.625rem;cursor:pointer;white-space:nowrap;"
+                                        onclick="return confirm('Publier et ouvrir les paris ?')">
+                                    Publier
+                                </button>
+                            </form>
+
+                            <form method="post" action="{{ path('app_manager_event_delete', {id: event.id}) }}" style="margin:0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete-event-'~event.id) }}">
+                                <button type="submit" class="btn-danger" style="font-size:0.75rem;padding:0.25rem 0.625rem;"
+                                        onclick="return confirm('Supprimer cet événement ?')">
+                                    Suppr.
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if event.status == 'PUBLIE' %}
+                            <form method="post" action="{{ path('app_manager_event_close', {id: event.id}) }}" style="margin:0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('close-event-'~event.id) }}">
+                                <button type="submit"
+                                        style="font-size:0.75rem;background:rgba(30,24,8,1);color:rgba(212,175,55,1);border:1px solid rgba(212,175,55,0.35);border-radius:1px;padding:0.25rem 0.625rem;cursor:pointer;white-space:nowrap;"
+                                        onclick="return confirm('Fermer les paris ?')">
+                                    Fermer paris
+                                </button>
+                            </form>
+
+                            <form method="post" action="{{ path('app_manager_event_cancel', {id: event.id}) }}" style="margin:0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('cancel-event-'~event.id) }}">
+                                <button type="submit" class="btn-danger" style="font-size:0.75rem;padding:0.25rem 0.625rem;"
+                                        onclick="return confirm('Annuler cet événement ?')">
+                                    Annuler
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if event.status == 'FERME' %}
+                            <span style="font-size:0.75rem;color:rgba(130,126,148,1);">En attente résultat</span>
+                            <form method="post" action="{{ path('app_manager_event_cancel', {id: event.id}) }}" style="margin:0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('cancel-event-'~event.id) }}">
+                                <button type="submit" class="btn-danger" style="font-size:0.75rem;padding:0.25rem 0.625rem;"
+                                        onclick="return confirm('Annuler et rembourser tous les paris ?')">
+                                    Annuler
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if event.status in ['TERMINE', 'ANNULE'] %}
+                            <span style="font-size:0.75rem;color:rgba(130,126,148,1);">—</span>
+                        {% endif %}
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

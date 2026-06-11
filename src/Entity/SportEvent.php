@@ -99,7 +99,7 @@ class SportEvent
         return $this->eventDate;
     }
 
-    public function setEventDate(\DateTimeInterface $eventDate): static
+    public function setEventDate(?\DateTimeInterface $eventDate): static
     {
         $this->eventDate = $eventDate;
         return $this;

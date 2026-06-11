@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier — {{ event.name }} — BetSport{% endblock %}
+
+{% block body %}
+<div style="max-width:680px;margin:0 auto;animation:fadeUp 0.5s cubic-bezier(0.25,0.46,0.45,0.94) both;">
+
+    <div style="margin-bottom:2rem;">
+        <a href="{{ path('app_manager_event_index') }}" style="font-size:0.8125rem;color:rgba(130,126,148,1);text-decoration:none;">← Mes événements</a>
+        <h1 style="font-family:'Cinzel',serif;font-size:1.75rem;font-weight:700;color:rgba(238,232,215,1);margin:0.75rem 0 0;">Modifier l'événement</h1>
+        <p style="color:rgba(130,126,148,1);font-size:0.875rem;margin:0.4rem 0 0;">{{ event.name }}</p>
+    </div>
+
+    <div class="card-luxury">
+        {% include 'manager/sport_event/_form.html.twig' with { form: form, label_submit: 'Enregistrer les modifications' } %}
+    </div>
+
+</div>
+{% endblock %}
