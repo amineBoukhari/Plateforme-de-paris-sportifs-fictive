@@ -24,7 +24,7 @@
             <span style="font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(130,126,148,1);">Actions</span>
         </div>
 
-        {% for user in users %}
+        {% for user in pagination %}
             {% set isAdmin   = 'ROLE_ADMIN'   in user.roles %}
             {% set isManager = 'ROLE_MANAGER' in user.roles %}
             {% set isSelf    = user == app.user %}
@@ -88,5 +88,7 @@
         {% endfor %}
 
     </div>
+
+    {{ include('components/_pagination.html.twig') }}
 </div>
 {% endblock %}

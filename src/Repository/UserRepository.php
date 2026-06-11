@@ -37,4 +37,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     }
+
+    public function createAllQueryBuilder(): \Doctrine\ORM\QueryBuilder
+    {
+        return $this->createQueryBuilder('u')
+            ->orderBy('u.email', 'ASC');
+    }
 }

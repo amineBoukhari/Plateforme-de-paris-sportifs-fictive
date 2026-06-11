@@ -9,6 +9,7 @@ use App\Repository\OutcomeRepository;
 use App\Repository\SportEventRepository;
 use App\Service\PayoutService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,12 +21,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SportEventController extends AbstractController
 {
     #[Route('', name: 'index')]
-    public function index(SportEventRepository $repo): Response
+    public function index(Request $request, SportEventRepository $repo, PaginatorInterface $paginator): Response
     {
-        $events = $repo->findBy(['manager' => $this->getUser()], ['eventDate' => 'DESC']);
+        $pagination = $paginator->paginate(
+            $repo->createByManagerQueryBuilder($this->getUser()->getId()),
+            $request->query->getInt('page', 1),
+            5
+        );
 
         return $this->render('manager/sport_event/index.html.twig', [
-            'events' => $events,
+            'pagination' => $pagination,
         ]);
     }
 
