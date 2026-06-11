@@ -2,10 +2,12 @@
 
 namespace App\Controller\User;
 
+use App\Entity\Bet;
 use App\Entity\SportEvent;
 use App\Repository\BetRepository;
 use App\Repository\OutcomeRepository;
 use App\Repository\SportEventRepository;
+use App\Security\Voter\BetVoter;
 use App\Service\BettingService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -73,6 +75,16 @@ class BetController extends AbstractController
         }
 
         return $this->redirectToRoute('app_user_bet_show', ['id' => $outcome->getSportEvent()->getId()]);
+    }
+
+    #[Route('/{id}', name: 'detail', requirements: ['id' => '\d+'])]
+    public function detail(Bet $bet): Response
+    {
+        $this->denyAccessUnlessGranted(BetVoter::VIEW, $bet);
+
+        return $this->render('user/bet/detail.html.twig', [
+            'bet' => $bet,
+        ]);
     }
 
     #[Route('/history', name: 'history')]

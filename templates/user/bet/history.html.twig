@@ -36,7 +36,10 @@
                 <div style="display:grid;grid-template-columns:1fr 160px 90px 90px 100px;gap:1rem;align-items:center;padding:1rem 1.25rem;border-bottom:{{ not loop.last ? '1px solid rgba(36,36,58,1)' : 'none' }};background:rgba(14,14,24,1);">
 
                     <div style="min-width:0;">
-                        <p style="font-size:0.875rem;font-weight:500;color:rgba(238,232,215,1);margin:0 0 0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ bet.sportEvent.name }}</p>
+                        <a href="{{ path('app_user_bet_detail', {id: bet.id}) }}"
+                           style="font-size:0.875rem;font-weight:500;color:rgba(238,232,215,1);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;"
+                           onmouseover="this.style.color='rgba(212,175,55,1)'"
+                           onmouseout="this.style.color='rgba(238,232,215,1)'">{{ bet.sportEvent.name }}</a>
                         <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ bet.outcome.label }}</p>
                     </div>
 
