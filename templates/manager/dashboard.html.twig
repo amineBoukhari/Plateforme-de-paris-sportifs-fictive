@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord Gestionnaire — BetSport{% endblock %}
+
+{% block body %}
+<div style="animation:fadeUp 0.5s cubic-bezier(0.25,0.46,0.45,0.94) both;">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2.5rem;">
+        <div>
+            <p style="font-size:0.6875rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(212,175,55,1);margin:0 0 0.4rem;">Gestionnaire</p>
+            <h1 style="font-family:'Cinzel',serif;font-size:1.875rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">Tableau de bord</h1>
+        </div>
+        <a href="{{ path('app_manager_event_new') }}" class="btn-gold" style="width:auto;padding:0.625rem 1.5rem;">
+            + Nouvel événement
+        </a>
+    </div>
+
+    {# Stats row #}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:rgba(85,68,18,0.4);border:1px solid rgba(85,68,18,0.4);border-radius:2px;margin-bottom:2.5rem;overflow:hidden;">
+
+        <div style="background:rgba(14,14,24,1);padding:1.5rem;">
+            <p style="font-size:2rem;font-weight:700;font-family:'Cinzel',serif;color:rgba(238,232,215,1);margin:0 0 0.25rem;">{{ counts.total }}</p>
+            <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0;letter-spacing:0.04em;">Total</p>
+        </div>
+
+        <div style="background:rgba(14,14,24,1);padding:1.5rem;">
+            <p style="font-size:2rem;font-weight:700;font-family:'Cinzel',serif;color:rgba(130,126,148,1);margin:0 0 0.25rem;">{{ counts.brouillon }}</p>
+            <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0;letter-spacing:0.04em;">Brouillon</p>
+        </div>
+
+        <div style="background:rgba(14,14,24,1);padding:1.5rem;">
+            <p style="font-size:2rem;font-weight:700;font-family:'Cinzel',serif;color:rgba(52,168,110,1);margin:0 0 0.25rem;">{{ counts.publie }}</p>
+            <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0;letter-spacing:0.04em;">Publiés</p>
+        </div>
+
+        <div style="background:rgba(14,14,24,1);padding:1.5rem;">
+            <p style="font-size:2rem;font-weight:700;font-family:'Cinzel',serif;color:rgba(212,175,55,1);margin:0 0 0.25rem;">{{ counts.ferme }}</p>
+            <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0;letter-spacing:0.04em;">Fermés</p>
+        </div>
+    </div>
+
+    {# Recent events #}
+    <h2 style="font-family:'Cinzel',serif;font-size:1rem;font-weight:600;color:rgba(238,232,215,1);margin:0 0 1rem;letter-spacing:0.04em;">Événements récents</h2>
+
+    {% if recent is empty %}
+        <p style="color:rgba(130,126,148,1);font-size:0.9rem;">Aucun événement. <a href="{{ path('app_manager_event_new') }}" style="color:rgba(212,175,55,1);">Créez votre premier événement.</a></p>
+    {% else %}
+        <div style="border:1px solid rgba(85,68,18,0.5);border-radius:2px;overflow:hidden;">
+            {% for event in recent %}
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;border-bottom:{{ not loop.last ? '1px solid rgba(36,36,58,1)' : 'none' }};background:rgba(14,14,24,1);">
+                    <div style="min-width:0;">
+                        <p style="font-size:0.9375rem;font-weight:500;color:rgba(238,232,215,1);margin:0 0 0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ event.name }}</p>
+                        <p style="font-size:0.75rem;color:rgba(130,126,148,1);margin:0;">{{ event.sport }} — {{ event.eventDate|date('d/m/Y H:i') }}</p>
+                    </div>
+                    {% include 'manager/_status_badge.html.twig' with { status: event.status } %}
+                </div>
+            {% endfor %}
+        </div>
+        <div style="margin-top:1rem;">
+            <a href="{{ path('app_manager_event_index') }}" style="color:rgba(212,175,55,1);font-size:0.8125rem;text-decoration:none;">Voir tous les événements →</a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

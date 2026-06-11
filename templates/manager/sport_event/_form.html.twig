@@ -1,0 +1,99 @@
+{{ form_start(form, { attr: { novalidate: 'novalidate', style: 'display:flex;flex-direction:column;gap:1.5rem;' } }) }}
+
+    {{ form_errors(form) }}
+
+    {# Name #}
+    <div>
+        {{ form_label(form.name, null, { label_attr: { class: 'label-luxury' } }) }}
+        {{ form_widget(form.name) }}
+        {{ form_errors(form.name) }}
+    </div>
+
+    {# Sport #}
+    <div>
+        {{ form_label(form.sport, null, { label_attr: { class: 'label-luxury' } }) }}
+        {{ form_widget(form.sport) }}
+        {{ form_errors(form.sport) }}
+    </div>
+
+    {# Participants #}
+    <div>
+        {{ form_label(form.participantsText, null, { label_attr: { class: 'label-luxury' } }) }}
+        {{ form_widget(form.participantsText) }}
+        {{ form_errors(form.participantsText) }}
+        <p style="font-size:0.6875rem;color:rgba(130,126,148,1);margin-top:0.3rem;">Un participant par ligne. Exemple : PSG / Real Madrid.</p>
+    </div>
+
+    {# Date + Heure #}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div>
+            {{ form_label(form.eventDatePart, null, { label_attr: { class: 'label-luxury' } }) }}
+            {{ form_widget(form.eventDatePart, { type: 'date' }) }}
+            {{ form_errors(form.eventDatePart) }}
+        </div>
+        <div>
+            {{ form_label(form.eventTimePart, null, { label_attr: { class: 'label-luxury' } }) }}
+            {{ form_widget(form.eventTimePart, { type: 'time' }) }}
+            {{ form_errors(form.eventTimePart) }}
+        </div>
+    </div>
+
+    {# Outcomes (CollectionType) #}
+    <div>
+        <p class="label-luxury" style="margin-bottom:0.75rem;">Issues et cotes</p>
+
+        <div id="outcomes-wrapper"
+             data-prototype="{{ form_widget(form.outcomes.vars.prototype) | e('html_attr') }}"
+             style="display:flex;flex-direction:column;gap:0.75rem;">
+            {% for outcomeForm in form.outcomes %}
+                <div class="outcome-row" style="display:grid;grid-template-columns:1fr 120px auto;gap:0.625rem;align-items:start;">
+                    {{ form_widget(outcomeForm.label) }}
+                    {{ form_widget(outcomeForm.odds) }}
+                    <button type="button" class="remove-outcome btn-danger"
+                            style="padding:0.5rem 0.75rem;font-size:0.75rem;align-self:flex-start;margin-top:0;">
+                        ✕
+                    </button>
+                </div>
+                {{ form_errors(outcomeForm.label) }}
+                {{ form_errors(outcomeForm.odds) }}
+            {% endfor %}
+        </div>
+
+        <button type="button" id="add-outcome"
+                style="margin-top:0.75rem;font-size:0.8rem;color:rgba(212,175,55,1);background:transparent;border:1px dashed rgba(85,68,18,1);border-radius:1px;padding:0.5rem 1rem;cursor:pointer;width:100%;transition:border-color 0.2s,color 0.2s;"
+                onmouseover="this.style.borderColor='rgba(212,175,55,0.6)'"
+                onmouseout="this.style.borderColor='rgba(85,68,18,1)'">
+            + Ajouter une issue
+        </button>
+    </div>
+
+    <button type="submit" class="btn-gold" style="margin-top:0.5rem;">
+        {{ label_submit }}
+    </button>
+
+{{ form_end(form) }}
+
+<script>
+(function () {
+    const wrapper = document.getElementById('outcomes-wrapper');
+    const addBtn  = document.getElementById('add-outcome');
+    let count = wrapper.querySelectorAll('.outcome-row').length;
+
+    addBtn.addEventListener('click', () => {
+        const prototype = wrapper.dataset.prototype;
+        const html = prototype.replace(/__name__/g, count);
+        const row = document.createElement('div');
+        row.className = 'outcome-row';
+        row.style.cssText = 'display:grid;grid-template-columns:1fr 120px auto;gap:0.625rem;align-items:start;';
+        row.innerHTML = html + '<button type="button" class="remove-outcome btn-danger" style="padding:0.5rem 0.75rem;font-size:0.75rem;align-self:flex-start;">✕</button>';
+        wrapper.appendChild(row);
+        count++;
+    });
+
+    wrapper.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-outcome')) {
+            e.target.closest('.outcome-row').remove();
+        }
+    });
+})();
+</script>
