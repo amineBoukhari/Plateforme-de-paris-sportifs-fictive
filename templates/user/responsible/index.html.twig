@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Jeu responsable — BetSport{% endblock %}
+
+{% block body %}
+<div style="max-width:640px;margin:0 auto;">
+
+    <div style="margin-bottom:2rem;">
+        <p style="font-size:0.6875rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(212,175,55,1);margin:0 0 0.4rem;">Mon compte</p>
+        <h1 style="font-family:'Cinzel',serif;font-size:1.875rem;font-weight:700;color:rgba(238,232,215,1);margin:0;">Jeu responsable</h1>
+    </div>
+
+    <div style="background:rgba(20,18,8,0.6);border:1px solid rgba(212,175,55,0.2);border-radius:2px;padding:1rem 1.25rem;margin-bottom:2rem;font-size:0.8125rem;color:rgba(180,160,80,1);">
+        Jouer comporte des risques. Ces outils vous aident à garder le contrôle.
+        Toute <strong>réduction</strong> de plafond est immédiate.
+        Toute <strong>augmentation</strong> est différée de 48h pour éviter les décisions impulsives.
+    </div>
+
+    {# --- Plafonds --- #}
+    <div class="card-luxury" style="margin-bottom:1.5rem;">
+        <h2 style="font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:rgba(238,232,215,1);margin:0 0 1.25rem;">Plafonds de dépôt &amp; de mise</h2>
+
+        <form method="post" style="display:flex;flex-direction:column;gap:1.125rem;">
+            <input type="hidden" name="_token" value="{{ csrf_token('responsible_gaming') }}">
+            <input type="hidden" name="action" value="limits">
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+                {# Dépôt quotidien #}
+                <div>
+                    <label class="label-luxury">Dépôt quotidien (€)</label>
+                    <input type="number" name="depositDaily" min="0" step="0.01"
+                           value="{{ config and config.depositDaily is not null ? config.depositDaily : '' }}"
+                           placeholder="Illimité"
+                           class="field-luxury">
+                    {% if pending.depositDaily is defined %}
+                        <p style="font-size:0.6875rem;color:rgba(212,175,55,0.7);margin-top:0.3rem;">
+                            ↗ {{ pending.depositDaily.value }} € appliqué le {{ pending.depositDaily.appliesAt|date('d/m à H:i') }}
+                        </p>
+                    {% endif %}
+                </div>
+
+                {# Dépôt hebdo #}
+                <div>
+                    <label class="label-luxury">Dépôt hebdomadaire (€)</label>
+                    <input type="number" name="depositWeekly" min="0" step="0.01"
+                           value="{{ config and config.depositWeekly is not null ? config.depositWeekly : '' }}"
+                           placeholder="Illimité"
+                           class="field-luxury">
+                    {% if pending.depositWeekly is defined %}
+                        <p style="font-size:0.6875rem;color:rgba(212,175,55,0.7);margin-top:0.3rem;">
+                            ↗ {{ pending.depositWeekly.value }} € appliqué le {{ pending.depositWeekly.appliesAt|date('d/m à H:i') }}
+                        </p>
+                    {% endif %}
+                </div>
+
+                {# Mise quotidienne #}
+                <div>
+                    <label class="label-luxury">Mise quotidienne (€)</label>
+                    <input type="number" name="betDaily" min="0" step="0.01"
+                           value="{{ config and config.betDaily is not null ? config.betDaily : '' }}"
+                           placeholder="Illimité"
+                           class="field-luxury">
+                    {% if pending.betDaily is defined %}
+                        <p style="font-size:0.6875rem;color:rgba(212,175,55,0.7);margin-top:0.3rem;">
+                            ↗ {{ pending.betDaily.value }} € appliqué le {{ pending.betDaily.appliesAt|date('d/m à H:i') }}
+                        </p>
+                    {% endif %}
+                </div>
+
+                {# Mise hebdo #}
+                <div>
+                    <label class="label-luxury">Mise hebdomadaire (€)</label>
+                    <input type="number" name="betWeekly" min="0" step="0.01"
+                           value="{{ config and config.betWeekly is not null ? config.betWeekly : '' }}"
+                           placeholder="Illimité"
+                           class="field-luxury">
+                    {% if pending.betWeekly is defined %}
+                        <p style="font-size:0.6875rem;color:rgba(212,175,55,0.7);margin-top:0.3rem;">
+                            ↗ {{ pending.betWeekly.value }} € appliqué le {{ pending.betWeekly.appliesAt|date('d/m à H:i') }}
+                        </p>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn-gold" style="margin-top:0.5rem;">
+                Enregistrer les plafonds
+            </button>
+        </form>
+    </div>
+
+    {# --- Auto-exclusion --- #}
+    <div class="card-luxury" style="border-color:rgba(180,60,60,0.3);">
+        <h2 style="font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:rgba(238,232,215,1);margin:0 0 0.5rem;">Auto-exclusion</h2>
+        <p style="font-size:0.8125rem;color:rgba(130,126,148,1);margin:0 0 1.25rem;">
+            Vous serez déconnecté immédiatement et ne pourrez plus vous connecter jusqu'à la date choisie.
+        </p>
+
+        <form method="post" style="display:flex;flex-direction:column;gap:1rem;">
+            <input type="hidden" name="_token" value="{{ csrf_token('responsible_gaming') }}">
+            <input type="hidden" name="action" value="self_exclude">
+
+            <div>
+                <label class="label-luxury">Date de fin d'exclusion</label>
+                <input type="date" name="end_date"
+                       min="{{ 'now'|date('Y-m-d') }}"
+                       class="field-luxury" required>
+            </div>
+
+            <button type="submit" class="btn-danger"
+                    onclick="return confirm('Confirmer l\'auto-exclusion ? Vous serez déconnecté immédiatement.')">
+                S'auto-exclure
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
