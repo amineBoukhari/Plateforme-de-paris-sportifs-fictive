@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BetSport — Paris Sportifs{% endblock %}
+
+{% block body %}
+
+{# ── Hero ────────────────────────────────────────────────────── #}
+<section style="text-align:center;padding:5rem 0 4.5rem;animation:fadeUp 0.55s cubic-bezier(0.25,0.46,0.45,0.94) both;">
+
+    {# Crown mark #}
+    <div style="margin-bottom:1.75rem;">
+        <svg width="52" height="52" viewBox="0 0 40 40" fill="none"
+             xmlns="http://www.w3.org/2000/svg"
+             style="display:inline-block;" aria-hidden="true">
+            <path d="M4 31L7.5 14L14.5 20L20 5L25.5 20L32.5 14L36 31H4Z"
+                  stroke="rgba(212,175,55,1)" stroke-width="1.8" fill="none"
+                  stroke-linejoin="round" stroke-linecap="round"/>
+            <line x1="4" y1="36" x2="36" y2="36"
+                  stroke="rgba(212,175,55,1)" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+    </div>
+
+    <h1 style="font-family:'Cinzel',serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:700;letter-spacing:0.02em;color:rgba(238,232,215,1);line-height:1.15;margin:0 0 1.25rem;text-wrap:balance;">
+        Maîtrisez l'art<br>
+        <span style="color:rgba(212,175,55,1);">du pari sportif fictif.</span>
+    </h1>
+
+ 
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;">
+        <a href="{{ path('app_register') }}"
+           class="btn-gold"
+           style="width:auto;padding:0.8125rem 2.25rem;font-size:0.8rem;">
+            Créer un compte
+        </a>
+        <a href="{{ path('app_login') }}"
+           class="btn-ghost"
+           style="padding:0.8125rem 2.25rem;">
+            Se connecter
+        </a>
+    </div>
+</section>
+
+{# ── Gold rule ────────────────────────────────────────────────── #}
+<div style="height:1px;background:linear-gradient(to right,rgba(85,68,18,0),rgba(212,175,55,0.45),rgba(85,68,18,0));margin-bottom:0;"></div>
+
+{# ── Pillars ──────────────────────────────────────────────────── #}
+<section class="grid grid-cols-1 md:grid-cols-3"
+         style="animation:fadeUp 0.65s 0.1s cubic-bezier(0.25,0.46,0.45,0.94) both;">
+
+    <div style="padding:2.75rem 2rem;border-right:1px solid rgba(85,68,18,0.5);">
+        <div style="font-size:2rem;margin-bottom:1.25rem;line-height:1;"></div>
+        <h3 style="font-family:'Cinzel',serif;font-size:1rem;font-weight:600;letter-spacing:0.04em;color:rgba(238,232,215,1);margin:0 0 0.75rem;">
+            Événements sportifs
+        </h3>
+        <p style="font-size:0.875rem;color:rgba(130,126,148,1);line-height:1.7;margin:0;max-width:34ch;">
+            Consultez les événements publiés, leurs issues et leurs cotes mis à jour en temps réel.
+        </p>
+    </div>
+
+    <div style="padding:2.75rem 2rem;border-right:1px solid rgba(85,68,18,0.5);">
+        <div style="font-size:2rem;margin-bottom:1.25rem;line-height:1;"></div>
+        <h3 style="font-family:'Cinzel',serif;font-size:1rem;font-weight:600;letter-spacing:0.04em;color:rgba(238,232,215,1);margin:0 0 0.75rem;">
+            Portefeuille virtuel
+        </h3>
+        <p style="font-size:0.875rem;color:rgba(130,126,148,1);line-height:1.7;margin:0;max-width:34ch;">
+            Déposez de l'argent fictif, pariez et consultez l'historique complet de vos transactions.
+        </p>
+    </div>
+
+    <div style="padding:2.75rem 2rem;">
+        <div style="font-size:2rem;margin-bottom:1.25rem;line-height:1;"></div>
+        <h3 style="font-family:'Cinzel',serif;font-size:1rem;font-weight:600;letter-spacing:0.04em;color:rgba(238,232,215,1);margin:0 0 0.75rem;">
+            Jeu responsable
+        </h3>
+        <p style="font-size:0.875rem;color:rgba(130,126,148,1);line-height:1.7;margin:0;max-width:34ch;">
+            Définissez vos plafonds de mise et de dépôt. Activez l'auto-exclusion à tout moment.
+        </p>
+    </div>
+
+</section>
+
+{# ── Gold rule #2 ─────────────────────────────────────────────── #}
+<div style="height:1px;background:linear-gradient(to right,rgba(85,68,18,0),rgba(212,175,55,0.45),rgba(85,68,18,0));"></div>
+
+{# ── Legal notice ─────────────────────────────────────────────── #}
+<p style="text-align:center;font-size:0.6875rem;color:rgba(70,68,85,1);padding:2rem 0 1rem;letter-spacing:0.03em;">
+    Plateforme fictive à but pédagogique — Jouer comporte des risques.
+    <span style="color:rgba(100,98,118,1);">Jouez de manière responsable.</span>
+</p>
+
+{% endblock %}
