@@ -1,24 +1,54 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BetSport{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🏆</text></svg>">
+    {% block stylesheets %}{% endblock %}
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+    <nav class="bg-gray-900 text-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="{{ path('app_login') }}" class="text-xl font-bold tracking-wide">🏆 BetSport</a>
+            <div class="flex items-center gap-4 text-sm">
+                {% if app.user %}
+                    <span class="text-gray-300">{{ app.user.email }}</span>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_admin_dashboard') }}" class="hover:text-yellow-400">Admin</a>
+                    {% endif %}
+                    {% if is_granted('ROLE_MANAGER') %}
+                        <a href="{{ path('app_manager_dashboard') }}" class="hover:text-yellow-400">Manager</a>
+                    {% endif %}
+                    <a href="{{ path('app_user_dashboard') }}" class="hover:text-yellow-400">Mon espace</a>
+                    <a href="{{ path('app_logout') }}" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded">Déconnexion</a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="hover:text-yellow-400">Connexion</a>
+                    <a href="{{ path('app_register') }}" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold px-3 py-1 rounded">Inscription</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
 
-        {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphpHotReload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
-    </head>
-    <body>
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mb-4 px-4 py-3 rounded {{ label == 'error' ? 'bg-red-100 text-red-700 border border-red-300' : 'bg-green-100 text-green-700 border border-green-300' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
         {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 text-center py-4 text-xs mt-auto">
+        Plateforme fictive à but pédagogique — Jouer comporte des risques. Jouez de manière responsable.
+    </footer>
+
+</body>
 </html>

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription — BetSport{% endblock %}
+
+{% block body %}
+<div class="max-w-md mx-auto mt-10">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Créer un compte</h1>
+
+    {{ form_start(form, {'attr': {'class': 'bg-white shadow rounded-lg p-6 space-y-4'}}) }}
+
+        <div>
+            {{ form_label(form.email, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+            {{ form_widget(form.email, {'attr': {'class': 'w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div>
+            {{ form_label(form.birthdate, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+            {{ form_widget(form.birthdate, {'attr': {'class': 'w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
+            {{ form_errors(form.birthdate) }}
+            <p class="text-xs text-gray-400 mt-1">Vous devez avoir au moins 18 ans.</p>
+        </div>
+
+        <div>
+            {{ form_label(form.plainPassword.first, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+            {{ form_widget(form.plainPassword.first, {'attr': {'class': 'w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
+            {{ form_errors(form.plainPassword.first) }}
+        </div>
+
+        <div>
+            {{ form_label(form.plainPassword.second, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+            {{ form_widget(form.plainPassword.second, {'attr': {'class': 'w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
+            {{ form_errors(form.plainPassword.second) }}
+        </div>
+
+        <button type="submit"
+            class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold py-2 rounded transition">
+            Créer mon compte
+        </button>
+
+    {{ form_end(form) }}
+
+    <p class="text-center text-sm text-gray-500 mt-4">
+        Déjà un compte ? <a href="{{ path('app_login') }}" class="text-yellow-600 hover:underline">Se connecter</a>
+    </p>
+
+    <p class="text-center text-xs text-gray-400 mt-6">
+        Jouer comporte des risques. Jouez de manière responsable.
+    </p>
+</div>
+{% endblock %}
